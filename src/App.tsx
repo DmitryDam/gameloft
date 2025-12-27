@@ -1,44 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import ProductCard from "./components/ProductCard";
+import Cart from "./components/Cart";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is--++- {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  price: number;
+  quantity: number;
 }
 
-export default App
-// npm run lint → перевірка всього коду ESLint
+const products: Product[] = [
+  {
+    id: 1,
+    title: "Gameloft Slot Machine",
+    description: "Try your luck with this exciting slot game.",
+    image: "https://picsum.photos/200/150?random=1",
+    price: 10,
+    quantity: 1,
+  },
+  {
+    id: 2,
+    title: "Dragon Slayer Game",
+    description: "Adventure and dragons await you.",
+    image: "https://picsum.photos/200/150?random=2",
+    price: 15,
+    quantity: 1,
+  },
+  {
+    id: 3,
+    title: "Casino Royale",
+    description: "High stakes and big rewards.",
+    image: "https://picsum.photos/200/150?random=3",
+    price: 20,
+    quantity: 1,
+  },
+];
 
-// npm run format → відформатує весь проект через Prettier
+const App: React.FC = () => {
+  const [cart, setCart] = useState<Product[]>([]);
 
-// npm run build → створює готову збірку проекту
+  const addToCart = (product: Product) => {
+    setCart((prev) => {
+      const existing = prev.find((p) => p.id === product.id);
+      if (existing) {
+        return prev.map((p) =>
+          p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
+        );
+      } else {
+        return [...prev, { ...product }];
+      }
+    });
+  };
 
-// npm run preview → дивитися збірку локально
+  return (
+    <div className="max-w-5xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Gameloft Products</h1>
+      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} addToCart={addToCart} />
+        ))}
+      </div>
+      <Cart cart={cart} />
+    </div>
+  );
+};
+
+export default App;
